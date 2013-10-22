@@ -1,0 +1,32 @@
+@charset "UTF-8";
+
+form{
+	margin: 0px auto;
+	margin-top:7%;
+	padding: 20px;
+	background:#FFF;
+	border: 1px #aaa solid;
+	border-radius: 5px;
+}
+
+
+
+form input textarea{
+	height: auto;
+	padding: 10px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	margin-bottom: 10px;
+	
+}
+
+textarea{
+	max-width: 390px;
+	max-height: 90px;	
+}
+
+form .button-padding{
+	padding: 10px;
+}

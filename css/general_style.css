@@ -1,0 +1,21 @@
+@charset "UTF-8";
+body{
+	//background: #eee;
+	background: #F0F0F0 url(../img/noisebg.png);
+	color: #333;
+}
+
+img {
+  max-width: none;
+}
+
+form .input-error{
+	background: rgba(200,0,0,.1);
+	border: 1px #C00 solid;		
+}
+
+.alerta{
+	
+	margin-top:10px;
+	padding: 10px;
+}

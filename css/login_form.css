@@ -1,0 +1,45 @@
+@charset "UTF-8";
+
+form{
+	max-width: 300px;
+	margin: 5px auto;
+	margin-top:50px;
+	padding: 5px;
+}
+
+form .first-input{
+	height: auto;
+	padding: 10px;
+	margin-bottom: 0px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+}
+
+form .last-input{
+	height: auto;
+	padding: 10px;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	margin-bottom: 10px;
+	
+}
+
+form .checkbox{
+	margin-bottom: 10px;
+}
+
+form .button-padding{
+	padding: 10px;
+}
+
+.alerta{
+	
+	margin-top:10px;
+	max-width: 300px;
+	padding: 10px;
+}
+
