@@ -1,7 +1,7 @@
 <?php
-
+session_start(); 
 session_destroy();
-$_SESSION = array();
+//$_SESSION = array();
 
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();

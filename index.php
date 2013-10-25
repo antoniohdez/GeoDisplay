@@ -2,7 +2,6 @@
 
 require_once("driver.php");
 require_once("layout.php");
-
 $driver = new dbDriver();
 
 if(!isset($_SESSION["id"])){
@@ -25,10 +24,10 @@ if(isset($_GET["submit"])){
 		$target_path = "uploads/";
 		$target_path = $target_path.basename($_FILES['uploadedfile']['name']); 
 		if(move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) { 
-			echo "File ". basename( $_FILES['uploadedfile']['name']). " has been uploaded";
+			//echo "File ". basename( $_FILES['uploadedfile']['name']). " has been uploaded";
 			$success = true;
 		} else{
-			echo "Something is wrong, try again. Please.";
+			//echo "Something is wrong, try again. Please.";
 			$success = false;
 		}
 		$tag_name = $_POST["tag_name"];
@@ -37,8 +36,10 @@ if(isset($_GET["submit"])){
 		$url_title = $_POST["url_title"];
 		$latitude = $_POST["latitude"];
 		$longitude = $_POST["longitude"];
-		$success = $success and $driver->addTag($_SESSION["id"], $tag_name, $description, $latitude, $longitude, $target_path, $url, $url_title, 0);
-		if ($success){
+		//$success = $success and 
+        $driver->addTag($_SESSION["id"], $tag_name, $description, $latitude, $longitude, $target_path, $url, $url_title);
+		
+        if ($success){
 			header("Location: index.php?msg=1");
 		} else {
 			header("Location: index.php?msg=2");
@@ -54,7 +55,7 @@ if(isset($_GET["submit"])){
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    
+
     <title>Add a tag : GeoDisplay</title>
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

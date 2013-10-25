@@ -1,26 +1,31 @@
-<?php	
-	
+<?php
+//error_reporting(0);
 class dbDriver{
 	private $conexion;
 	
 	function __construct(){
-	    $this->conexion = mysql_connect("127.0.0.1:3306", "root", "") or die("Error while connecting the database");
-		mysql_select_db("creatorsstudio");
+	    $this->conexion = mysqli_connect("localhost","root","","creatorstudio");
+	    if (mysqli_connect_errno())
+	  	{
+	  		echo "Error while connecting the database" . mysqli_connect_error();
+	  	}
 		session_start();
 	}
 	
 	function __destruct(){
-		mysql_close($this->conexion);
+		mysqli_close($this->conexion);
 	}
 
-	function addTag($user_id, $point_name, $description, $latitude, $longitude, $image_path, $url, $text_url, $id){
-		return $query = mysql_query("INSERT INTO points VALUES('$user_id', '$point_name', '$description', $latitude, $longitude, '$image_path', '$url', '$text_url', $id)");
+	function addTag($user_id, $point_name, $description, $latitude, $longitude, $image_path, $url, $text_url){
+		$query = mysqli_query($this->conexion, "INSERT INTO points (user_id, point_name, description, latitude, longitude, image_path, url, text_url) VALUES ('$user_id', '$point_name', '$description', '$latitude', '$longitude', '$image_path', '$url', '$text_url')");
+		//return $query;
 	}
 	
 	function login($user, $password){
 		$password = md5($password);
-		$query = mysql_query("SELECT * from users where email='$user'");			
-		$row = mysql_fetch_array($query);
+		$query = mysqli_query($this->conexion,"SELECT * from users where email='$user'");			
+		//$row = mysql_fetch_array($query);
+		$row = $query->fetch_array(MYSQLI_ASSOC);
 		if($row['password'] == $password){
 			$_SESSION["name"] = $row["name"];
 			$_SESSION["id"] = $row["id"];
@@ -37,9 +42,9 @@ class dbDriver{
 	}
 	
 	function getTag($id){
-		$query = mysql_query("SELECT * FROM points WHERE id='$id'");
-		$row=mysql_fetch_array($query);
-		$array = [
+		$query = mysqli_query($this->conexion, "SELECT * FROM points WHERE id='$id'");
+		$row=$query->fetch_array(MYSQLI_ASSOC);
+		$array = array(
 			"point_name" => $row['point_name'],
 			"description" => $row['description'],
 			"latitude" => $row['latitude'],
@@ -48,17 +53,17 @@ class dbDriver{
 			"url" => $row['url'],
 			"text_url" => $row['text_url'],
 			"id" => $row['id'],
-		];
+		);
 		return $array;
 	}
 
 	function getTags($username){
-		$query = mysql_query("SELECT * FROM points WHERE user_id='$username' order by id");
+		$query = mysqli_query($this->conexion, "SELECT * FROM points WHERE user_id='$username' order by id");
 		echo '<table class="table zebra-striped">';
 		echo "<thead><tr><th>#</th><th>Tag name</th><th>URL</th><th>Latitude</th><th>Longitude</th><th>Edit</th><th>Delete</th></tr></thead>";
 		$i = 1;
 		echo "<tbody>";
-		while($row=mysql_fetch_array($query)){
+		while($row=$query->fetch_array(MYSQLI_ASSOC)){
 			echo "<tr><th>".$i."</th><th>".$row['point_name']."</th><th>".$row['url']."</th><th>".$row['latitude']."</th><th>".$row['longitude']."</th><th><a href='tags.php?edit=".$row['id']."' class='btn btn-info btn-small'>Edit</a></th><th><a href='tags.php?delete=".$row['id']."' class='btn btn-danger btn-small'>Delete</a></th></tr>";
 			$i++;
 		}
@@ -68,25 +73,25 @@ class dbDriver{
 	
 	function editTag($point_name, $description, $latitude, $longitude, $image_path, $url, $text_url, $id){
 		if($image_path=="uploads/"){
-			return $query = mysql_query("UPDATE points SET point_name='$point_name', description='$description', latitude=$latitude, longitude=$longitude, url='$url', text_url='$text_url' WHERE id='$id'");
+			return $query = mysqli_query($this->conexion,"UPDATE points SET point_name='$point_name', description='$description', latitude=$latitude, longitude=$longitude, url='$url', text_url='$text_url' WHERE id='$id'");
 		} else {
-			return $query = mysql_query("UPDATE points SET point_name='$point_name', description='$description', latitude=$latitude, longitude=$longitude, image_path='$image_path', url='$url', text_url='$text_url' WHERE id='$id'"); 	 
+			return $query = mysqli_query($this->conexion,"UPDATE points SET point_name='$point_name', description='$description', latitude=$latitude, longitude=$longitude, image_path='$image_path', url='$url', text_url='$text_url' WHERE id='$id'"); 	 
 		}
 	}
 	
 	function editTagWithoutImage($point_name, $description, $latitude, $longitude, $url, $text_url, $id){
-		return $query = mysql_query("UPDATE points SET point_name='$point_name', description='$description', latitude=$latitude, longitude=$longitude, url='$url', text_url='$text_url' WHERE id='$id'");
+		return $query = mysqli_query($this->conexion,"UPDATE points SET point_name='$point_name', description='$description', latitude=$latitude, longitude=$longitude, url='$url', text_url='$text_url' WHERE id='$id'");
 	}
 	
 	function deleteTag($id){
-		return $query = mysql_query("DELETE FROM points WHERE id='$id'");
+		return $query = mysqli_query($this->conexion,"DELETE FROM points WHERE id='$id'");
 	}
 	
 	function getTagsByUser($id){
-		$sql = mysql_query("SELECT * FROM points where user_id='$id'");
+		$sql = mysqli_query($this->conexion,"SELECT * FROM points where user_id='$id'");
 		$response = array();
 		$posts = array();
-		while($row=mysql_fetch_array($sql)){
+		while($row=$sql->fetch_array(MYSQLI_ASSOC)){
 			$point_name = $row['point_name'];
 			$description = $row['description'];
 			$latitude = $row['latitude'];
@@ -104,8 +109,8 @@ class dbDriver{
 	}
 	
 	function checkPoints($id){
-		$query = mysql_query("SELECT points FROM users where id='$id'");
-		$row=mysql_fetch_array($query);
+		$query = mysqli_query($this->conexion, "SELECT points FROM users where id='$id'");
+		$row=$query->fetch_array(MYSQLI_ASSOC);
 		if($row['points'] > 0){
 			return true;
 		} else {

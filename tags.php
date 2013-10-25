@@ -27,9 +27,9 @@ if($editing){
 		$target_path = "uploads/";
 		$target_path = $target_path.basename($_FILES['uploadedfile']['name']); 
 		if(move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) { 
-			echo "File ". basename( $_FILES['uploadedfile']['name']). " has been uploaded";
+			//echo "File ". basename( $_FILES['uploadedfile']['name']). " has been uploaded";
 		} else{
-			echo "Something is wrong, try again.";
+			//echo "Something is wrong, try again.";
 		}
 		$tag_name = $_POST["tag_name"];
 		$description = $_POST["description"];
