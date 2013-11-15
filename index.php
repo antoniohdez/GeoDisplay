@@ -5,7 +5,7 @@ require_once("layout.php");
 $driver = new dbDriver();
 
 if(!isset($_SESSION["id"])){
-	header('Location: login.php?err=2');
+	header('Location: login.php');
 } 
 
 $msg = isset($_GET["msg"]) ? $_GET["msg"] : 0;
@@ -30,6 +30,15 @@ if(isset($_GET["submit"])){
 			//echo "Something is wrong, try again. Please.";
 			$success = false;
 		}
+
+        $logo_path = "logo/";
+        $logo_path = $logo_path.basename($_FILES['uploadedlogo']['name']); 
+        if(move_uploaded_file($_FILES['uploadedlogo']['tmp_name'], $logo_path)) { 
+            $success = true;
+        } else{
+            $success = false;
+        }
+
 		$tag_name = $_POST["tag_name"];
 		$description = $_POST["description"];
 		$url = $_POST["url"];
@@ -37,7 +46,7 @@ if(isset($_GET["submit"])){
 		$latitude = $_POST["latitude"];
 		$longitude = $_POST["longitude"];
 		//$success = $success and 
-        $driver->addTag($_SESSION["id"], $tag_name, $description, $latitude, $longitude, $target_path, $url, $url_title);
+        $driver->addTag($_SESSION["id"], $tag_name, $description, $latitude, $longitude, $target_path, $url, $url_title , $logo_path);
 		
         if ($success){
 			header("Location: index.php?msg=1");
@@ -50,14 +59,11 @@ if(isset($_GET["submit"])){
 	exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-
     <title>Add a tag : GeoDisplay</title>
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="css/bootstrap.css" rel="stylesheet" media="screen">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -88,6 +94,9 @@ if(isset($_GET["submit"])){
                     },
 					uploadedfile :{
                         required : true	
+                    },
+                    uploadedlogo :{
+                        required : true 
                     }
                 },
                 messages :{
@@ -105,6 +114,9 @@ if(isset($_GET["submit"])){
                     },
 					uploadedfile :{
                         required : ""	
+                    },
+                    uploadedlogo :{
+                        required : "" 
                     }
                 },
                 errorElement: "div",
@@ -118,7 +130,6 @@ if(isset($_GET["submit"])){
                     error.css('top', offset.top + 5);
                 }
             });
-		
 		$("textarea[maxlength]").keyup(function() {
         var limit   = $(this).attr("maxlength"); // Límite del textarea
         var value   = $(this).val();             // Valor actual del textarea
@@ -183,6 +194,9 @@ if(isset($_GET["submit"])){
                         	
                             <label for="uploadedfile"><br>Image *</label>
 							<input id="uploadedfile" name="uploadedfile" type="file">
+
+                            <label for="uploadedlogo"><br>Logo *</label>
+                            <input id="uploadedlogo" name="uploadedlogo" type="file">
                             
                             
                             <!--
@@ -201,9 +215,14 @@ if(isset($_GET["submit"])){
                         
                         </div>
                         <div class="span7">
-                        	<div id="map" style="margin: 0; padding: 0;height:300px; width:auto;"></div>
-							<input type="text" id="latitude" name="latitude" style="display: none;" class="input-block-level" >
-							<input type="text" id="longitude" name="longitude" style="display: none;" class="input-block-level" >
+                        	<label for="latitude"><br>Latitude *</label>
+                            <input type="text" id="latitude" name="latitude" class="input-block-level" >
+                            
+                            <label for="longitude"><br>Longitude *</label>
+                            <input type="text" id="longitude" name="longitude" class="input-block-level" >
+
+                            <div id="map" style="margin: 15px 0 0 0; padding: 0;height:315px; width:auto;"></div>
+							
                         </div>
                     </div>
                 	<div class="row-fluid">
@@ -216,8 +235,7 @@ if(isset($_GET["submit"])){
                 </form>
             </div>
         </div>
-        </div>
-                
+        </div>  
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap.file-input.js"></script>
 </body>

@@ -16,8 +16,9 @@ class dbDriver{
 		mysqli_close($this->conexion);
 	}
 
-	function addTag($user_id, $point_name, $description, $latitude, $longitude, $image_path, $url, $text_url){
+	function addTag($user_id, $point_name, $description, $latitude, $longitude, $image_path, $url, $text_url, $logo_path){
 		$query = mysqli_query($this->conexion, "INSERT INTO points (user_id, point_name, description, latitude, longitude, image_path, url, text_url) VALUES ('$user_id', '$point_name', '$description', '$latitude', '$longitude', '$image_path', '$url', '$text_url')");
+		$query = mysqli_query($this->conexion, "UPDATE users SET logo_path = '$logo_path' WHERE id='$user_id' ");
 		//return $query;
 	}
 	
