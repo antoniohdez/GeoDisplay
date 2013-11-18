@@ -198,14 +198,13 @@ if(isset($_GET["submit"])){
                             <label for="uploadedlogo"><br>Logo *</label>
                             <input id="uploadedlogo" name="uploadedlogo" type="file">
                             
-                            
                             <!--
 							<label for="uploadedfile">Imagen *</label>
 							<a class="file-input-wrapper btn">Search for an image<input type="file" title="Search for a file to add"></a>
                             -->
                         
                             <label for="description" style="margin-top:10px;">Description *</label>
-                            <textarea name="description" style="resize:none" maxlength="140" rows="4" value="<?php echo $description ?>" class="input-block-level" placeholder="140 characters"></textarea>
+                            <textarea id="description" name="description" style="resize:none" maxlength="140" rows="4" value="<?php echo $description ?>" class="input-block-level" placeholder="140 characters"></textarea>
                         	
 							<label for="url"><br>URL *</label>
 							<input type="text" id="url" name="url" value="<?php echo $url ?>" class="input-block-level" placeholder="www.mycompany.com">
@@ -215,18 +214,35 @@ if(isset($_GET["submit"])){
                         
                         </div>
                         <div class="span7">
-                        	<label for="latitude"><br>Latitude *</label>
+                        	<label for="latitude">Latitude *</label>
                             <input type="text" id="latitude" name="latitude" class="input-block-level" >
                             
                             <label for="longitude"><br>Longitude *</label>
                             <input type="text" id="longitude" name="longitude" class="input-block-level" >
 
-                            <div id="map" style="margin: 15px 0 0 0; padding: 0;height:315px; width:auto;"></div>
-							
+                            <div id="map" style="margin: 15px 0 0 0; padding: 0;height:230px; width:auto;"></div>
+							<div class="preview">
+                                <div style="float:left; width:80px; height:80px; background:#DDD">
+                                    
+                                </div>
+                                <div style="margin-left:90px;">
+                                    <div id="preTitle">
+                                    
+                                    </div>
+                                    <div id="preDescription">
+                                    
+                                    </div>
+                                    <div>
+                                    
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                 	<div class="row-fluid">
                     	<div class="span12" style="margin-top:15px;">
+                            <hr>
                     		<button type="submit" class="btn btn-primary">Save</button>
                         	<input type="reset" class="btn" value="Cancel" >
 							
@@ -238,5 +254,14 @@ if(isset($_GET["submit"])){
         </div>  
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap.file-input.js"></script>
+    <script type="text/javascript">
+        $("input").on("focusout", function() {
+            $("#preTitle").html($("#tag_name").val());
+        });
+        $("textarea").on("focusout", function() {
+            $("#preDescription").html($("#description").val());
+        });
+
+    </script>
 </body>
 </html>
