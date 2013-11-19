@@ -193,7 +193,7 @@ if(isset($_GET["submit"])){
                             <input type="text" id="tag_name" name="tag_name" value="<?php echo $tag_name ?>" class="input-block-level" placeholder="My tag">
                         	
                             <label for="uploadedfile"><br>Image *</label>
-							<input id="uploadedfile" name="uploadedfile" type="file">
+							<input id="uploadedfile" name="uploadedfile" type="file" onchange="upload_img(this);" />
 
                             <label for="uploadedlogo"><br>Logo *</label>
                             <input id="uploadedlogo" name="uploadedlogo" type="file">
@@ -222,8 +222,8 @@ if(isset($_GET["submit"])){
 
                             <div id="map" style="margin: 15px 0 0 0; padding: 0;height:230px; width:auto;"></div>
 							<div class="preview">
-                                <div style="float:left; width:80px; height:80px; background:#DDD">
-                                    
+                                <div id="previewImage" style="float:left; width:80px; height:80px; background:#DDD">
+                                   <img id="img_id" width="80px" height="80px" src="#" /> 
                                 </div>
                                 <div style="margin-left:90px;">
                                     <div id="preTitle">
@@ -261,6 +261,21 @@ if(isset($_GET["submit"])){
         $("textarea").on("focusout", function() {
             $("#preDescription").html($("#description").val());
         });
+        $('#img_id').hide();
+        function upload_img(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#img_id').attr('src', e.target.result);
+                }
+                
+                $('#img_id').show();
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
 
     </script>
 </body>
