@@ -4,7 +4,7 @@ class dbDriver{
 	private $conexion;
 	
 	function __construct(){
-	    $this->conexion = mysqli_connect("localhost","root","","creatorstudio");
+	    $this->conexion = mysqli_connect("localhost","root","","creatorsstudio");
 	    if (mysqli_connect_errno())
 	  	{
 	  		echo "Error while connecting the database" . mysqli_connect_error();

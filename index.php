@@ -275,8 +275,16 @@ if(isset($_GET["submit"])){
                 reader.readAsDataURL(input.files[0]);
             }
         }
-
-
+        $("#latitude").on("focusout", function() {
+            pos = new google.maps.LatLng(parseFloat($("#latitude").val()), parseFloat($("#longitude").val()));
+            marker.position = pos;
+            map.setCenter(pos);
+        });
+        $("#longitude").on("focusout", function() {
+            pos = new google.maps.LatLng(parseFloat($("#latitude").val()), parseFloat($("#longitude").val()));
+            marker.position = pos;
+            map.setCenter(pos);
+        });
     </script>
 </body>
 </html>
