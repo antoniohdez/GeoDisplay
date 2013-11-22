@@ -16,16 +16,16 @@ class dbDriver{
 		mysqli_close($this->conexion);
 	}
 
-	function addTag($user_id, $point_name, $description, $latitude, $longitude, $image_path, $url, $text_url, $logo_path){
-		$query = mysqli_query($this->conexion, "INSERT INTO points (user_id, point_name, description, latitude, longitude, image_path, url, text_url) VALUES ('$user_id', '$point_name', '$description', '$latitude', '$longitude', '$image_path', '$url', '$text_url')");
+	function addTag($user_id, $point_name, $description, $latitude, $longitude, $image_path, $url, $logo_path, $audio_path, $video_path, $facebook, $twitter){
+		$query = mysqli_query($this->conexion, "INSERT INTO points (user_id, point_name, description, latitude, longitude, image_path, url, audio_path, video_path) VALUES ('$user_id', '$point_name', '$description', '$latitude', '$longitude', '$image_path', '$url', '$audio_path', '$video_path')");
 		$query = mysqli_query($this->conexion, "UPDATE users SET logo_path = '$logo_path' WHERE id='$user_id' ");
-		//return $query;
+		$query = mysqli_query($this->conexion, "UPDATE users SET facebook = '$facebook' WHERE id='$user_id' ");
+		$query = mysqli_query($this->conexion, "UPDATE users SET twitter = '$twitter' WHERE id='$user_id' ");
 	}
 	
 	function login($user, $password){
 		$password = md5($password);
 		$query = mysqli_query($this->conexion,"SELECT * from users where email='$user'");			
-		//$row = mysql_fetch_array($query);
 		$row = $query->fetch_array(MYSQLI_ASSOC);
 		if($row['password'] == $password){
 			$_SESSION["name"] = $row["name"];
@@ -89,26 +89,31 @@ class dbDriver{
 	}
 	
 	function getTagsByUser($id){
-		$sql = mysqli_query($this->conexion,"SELECT * FROM points where user_id='$id'");
+		$sql_tag  = mysqli_query($this->conexion,"SELECT * FROM points where user_id='$id'");
+		$sql_user = mysqli_query($this->conexion,"SELECT * FROM users where id='$id'");
+		$row_user = mysqli_fetch_array($sql_user);
 		$response = array();
 		$posts = array();
-		while($row=$sql->fetch_array(MYSQLI_ASSOC)){
-			$point_name = $row['point_name'];
-			$description = $row['description'];
-			$latitude = $row['latitude'];
-			$longitude = $row['longitude'];
-			$image_path = $row['image_path'];
-			$url = $row['url'];
-			$text_url = $row['text_url'];
-			
-			$posts[] = array('point_name'=> $point_name, 'description'=> $description, 'latitude'=> $latitude, 'longitude'=> $longitude, 'image_path'=> $image_path, 'url'=> $url, 'text_url'=> $text_url);
+		while($row_tag = mysqli_fetch_array($sql_tag)) {
+			$point_name = $row_tag['point_name'];
+			$description = $row_tag['description'];
+			$latitude = $row_tag['latitude'];
+			$longitude = $row_tag['longitude'];
+			$image_path = $row_tag['image_path'];
+			$url = $row_tag['url'];
+			$audio_path = $row_tag['audio_path'];
+			$video_path = $row_tag['video_path'];
+			$facebook = $row_user['facebook'];
+			$twitter = $row_user['twitter'];
+
+			$posts[] = array('point_name'=>$point_name, 'description'=>$description, 'latitude'=>$latitude, 'longitude'=>$longitude, 'image_path'=>$image_path, 'url'=>$url, 'audio_path'=>$audio_path, 'video_path'=>$video_path, 'facebook'=>$facebook , 'twitter'=>$twitter);
 		}
 		$response['posts'] = $posts;
 		$fp = fopen("$id.json", 'w');
 		fwrite($fp, json_encode($response));
 		fclose($fp);
 	}
-	
+
 	function checkPoints($id){
 		$query = mysqli_query($this->conexion, "SELECT points FROM users where id='$id'");
 		$row=$query->fetch_array(MYSQLI_ASSOC);

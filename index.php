@@ -10,12 +10,13 @@ if(!isset($_SESSION["id"])){
 
 $msg = isset($_GET["msg"]) ? $_GET["msg"] : 0;
 $tag_name = '';
-$uploadedfile = '';
 $description = '';
 $url = '';
-$url_title = '';
 $latitude = '';
 $longitude = '';
+$facebook = '';
+$twitter = '';
+
 $success = true;
 $canUpload = $driver->checkPoints($_SESSION["id"]);
 
@@ -39,21 +40,38 @@ if(isset($_GET["submit"])){
             $success = false;
         }
 
+        $audio_path = "audio/";
+        $audio_path = $audio_path.basename($_FILES['uploadedaudio']['name']); 
+        if(move_uploaded_file($_FILES['uploadedaudio']['tmp_name'], $audio_path)) { 
+            $success = true;
+        } else{
+            $success = false;
+        }
+
+        $video_path = "video/";
+        $video_path = $video_path.basename($_FILES['uploadedvideo']['name']); 
+        if(move_uploaded_file($_FILES['uploadedvideo']['tmp_name'], $video_path)) { 
+            $success = true;
+        } else{
+            $success = false;
+        }
+
 		$tag_name = $_POST["tag_name"];
 		$description = $_POST["description"];
 		$url = $_POST["url"];
-		$url_title = $_POST["url_title"];
 		$latitude = $_POST["latitude"];
 		$longitude = $_POST["longitude"];
-		//$success = $success and 
-        $driver->addTag($_SESSION["id"], $tag_name, $description, $latitude, $longitude, $target_path, $url, $url_title , $logo_path);
+        $facebook = $_POST["facebook"];
+        $twitter = $_POST["twitter"];
+        $driver->addTag($_SESSION["id"], $tag_name, $description, $latitude, $longitude, $target_path, $url, $logo_path, $audio_path, $video_path, $facebook, $twitter);
 		
         if ($success){
 			header("Location: index.php?msg=1");
 		} else {
 			header("Location: index.php?msg=2");
 		}
-	} else {
+	} 
+    else {
 		header("Location: index.php?msg=3");
 	}
 	exit();
@@ -98,6 +116,18 @@ if(isset($_GET["submit"])){
                     uploadedlogo :{
                         required : true 
                     }
+                    uploadedaudio :{
+                        required : true 
+                    }
+                    uploadedvideo :{
+                        required : true 
+                    }
+                    facebook :{
+                        required : true 
+                    }
+                    twitter :{
+                        required : true 
+                    }
                 },
                 messages :{
                     tag_name : {
@@ -118,6 +148,18 @@ if(isset($_GET["submit"])){
                     uploadedlogo :{
                         required : "" 
                     }
+                    uploadedaudio :{
+                        required : "" 
+                    }
+                    uploadedvideo :{
+                        required : "" 
+                    }
+                    facebook :{
+                        required : "" 
+                    }
+                    twitter :{
+                        required : "" 
+                    }
                 },
                 errorElement: "div",
                 wrapper: "div",  // a wrapper around the error message
@@ -134,7 +176,7 @@ if(isset($_GET["submit"])){
         var limit   = $(this).attr("maxlength"); // Límite del textarea
         var value   = $(this).val();             // Valor actual del textarea
         var current = value.length;              // Número de caracteres actual
-            if (limit < current) {                   // Más del límite de caracteres?
+            if (limit < current) {               // Más del límite de caracteres?
                 // Establece el valor del textarea al límite
                 $(this).val(value.substring(0, limit));
             }
@@ -189,28 +231,33 @@ if(isset($_GET["submit"])){
 					?>
                     <div class="row-fluid">
                         <div class="span5">
+
                             <label for="tag_name">Tag name *</label>
                             <input type="text" id="tag_name" name="tag_name" value="<?php echo $tag_name ?>" class="input-block-level" placeholder="My tag">
-                        	
-                            <label for="uploadedfile"><br>Image *</label>
-							<input id="uploadedfile" name="uploadedfile" type="file" onchange="upload_img(this);" />
-
-                            <label for="uploadedlogo"><br>Logo *</label>
-                            <input id="uploadedlogo" name="uploadedlogo" type="file">
-                            
-                            <!--
-							<label for="uploadedfile">Imagen *</label>
-							<a class="file-input-wrapper btn">Search for an image<input type="file" title="Search for a file to add"></a>
-                            -->
                         
                             <label for="description" style="margin-top:10px;">Description *</label>
                             <textarea id="description" name="description" style="resize:none" maxlength="140" rows="4" value="<?php echo $description ?>" class="input-block-level" placeholder="140 characters"></textarea>
                         	
 							<label for="url"><br>URL *</label>
 							<input type="text" id="url" name="url" value="<?php echo $url ?>" class="input-block-level" placeholder="www.mycompany.com">
-							
-							<label for="url_title"><br>URL Title *</label>
-							<input type="text" id="url_title" name="url_title" value="<?php echo $url_title ?>" class="input-block-level" placeholder="My company">
+
+                            <label for="facebook"><br>Facebook *</label>
+                            <input type="text" id="facebook" name="facebook" value="<?php echo $facebook ?>" class="input-block-level" placeholder="Facebook acount">
+
+                            <label for="twitter"><br>Twitter *</label>
+                            <input type="text" id="twitter" name="twitter" value="<?php echo $twitter ?>" class="input-block-level" placeholder="Twitter acount">
+
+                            <label for="uploadedfile"><br>Image *</label>
+                            <input id="uploadedfile" name="uploadedfile" type="file" onchange="upload_img(this);" />
+
+                            <label for="uploadedlogo"><br>Logo *</label>
+                            <input id="uploadedlogo" name="uploadedlogo" type="file">
+
+                            <label for="uploadedaudio"><br>Audio *</label>
+                            <input id="uploadedaudio" name="uploadedaudio" type="file">
+
+                            <label for="uploadedvideo"><br>Video *</label>
+                            <input id="uploadedvideo" name="uploadedvideo" type="file">
                         
                         </div>
                         <div class="span7">
@@ -255,10 +302,10 @@ if(isset($_GET["submit"])){
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap.file-input.js"></script>
     <script type="text/javascript">
-        $("input").on("focusout", function() {
+        $("#tag_name").on("focusout", function() {
             $("#preTitle").html($("#tag_name").val());
         });
-        $("textarea").on("focusout", function() {
+        $("#description").on("focusout", function() {
             $("#preDescription").html($("#description").val());
         });
         $('#img_id').hide();
