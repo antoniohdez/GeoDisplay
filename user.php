@@ -66,8 +66,9 @@ $city = $user["city"];
 	<script src="js/jquery.js"></script>
     <script src="js/jquery.validate.js"></script>
 	<script type="text/javascript">
-	$(document).ready(function() {
-		$("#edit_tag_form").validate({
+    var validator;
+    $(document).ready(function() {
+        validator = $("#edit_tag_form").validate({
                 highlight: function(element, errorClass) {
                     $(element).addClass("input-error");
                 },
@@ -103,6 +104,7 @@ $city = $user["city"];
 		<div class="row">
 			<div class="span10 offset1">
                 <form form action="user.php?submit" enctype="multipart/form-data" class="form-horizontal" id="edit_tag_form" method="POST">
+                    <div class="modalLoading"></div>
                     <legend>Edit your profile</legend>
                     <div class="row-fluid">
                         <div class="span5">
@@ -142,5 +144,20 @@ $city = $user["city"];
     </div>                
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap.file-input.js"></script>
+    <script>
+        $("#edit_tag_form").submit(function(e){
+            if(validator.form()){
+                var form = this;
+                e.preventDefault();
+                //
+                $("body").addClass("loading");
+                $(".modalLoading").show(); 
+                //
+                var a = setTimeout(function(){
+                    form.submit();
+                },1000);
+            }
+        });
+    </script>
 </body>
 </html>

@@ -66,8 +66,9 @@ if(isset($_GET["submit"])){
 	<script src="js/jquery.js"></script>
     <script src="js/jquery.validate.js"></script>
 	<script type="text/javascript">
+    var validator;
 	$(document).ready(function() {
-		$("#tag_form").validate({
+		validator = $("#tag_form").validate({
                 highlight: function(element, errorClass) {
                     $(element).addClass("input-error");
                 },
@@ -121,6 +122,7 @@ if(isset($_GET["submit"])){
 		<div class="row">
 			<div class="span10 offset1">
                 <form form action="index.php?submit" enctype="multipart/form-data" class="form-horizontal" id="tag_form" method="POST">
+                    <div class="modalLoading"></div>
                     <legend>Add a tag</legend>
 					<?php
 					switch ($msg) {
@@ -248,6 +250,7 @@ if(isset($_GET["submit"])){
             </div>
         </div>
         </div>  
+        
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap.file-input.js"></script>
     <script type="text/javascript">
@@ -281,6 +284,21 @@ if(isset($_GET["submit"])){
             marker.position = pos;
             map.setCenter(pos);
         });
+
+        $("#tag_form").submit(function(e){
+            if(validator.form()){
+                var form = this;
+                e.preventDefault();
+                //
+                $("body").addClass("loading");
+                $(".modalLoading").show(); 
+                //
+                var a = setTimeout(function(){
+                    form.submit();
+                },1000);
+            }
+        });
     </script>
+
 </body>
 </html>

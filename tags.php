@@ -88,8 +88,9 @@ if($deleting){
 	<script src="js/jquery.js"></script>
     <script src="js/jquery.validate.js"></script>
 	<script type="text/javascript">
+    var validator;
 	$(document).ready(function() {
-		$("#edit_tag_form").validate({
+		validator = $("#edit_tag_form").validate({
                 highlight: function(element, errorClass) {
                     $(element).addClass("input-error");
                 },
@@ -236,6 +237,7 @@ if($deleting){
 			<div class="row">
 				<div class="span10 offset1">
                 <form form action="tags.php?submit&edit=<?php echo $_GET["edit"]?>" enctype="multipart/form-data" class="form-horizontal" id="edit_tag_form" method="POST">
+                    <div class="modalLoading"></div>
                     <legend>Edit your tag</legend>
                     <div class="row-fluid">
                         <div class="span5">
@@ -308,6 +310,20 @@ if($deleting){
             pos = new google.maps.LatLng(parseFloat($("#latitude").val()), parseFloat($("#longitude").val()));
             marker.position = pos;
             map.setCenter(pos);
+        });
+
+        $("#edit_tag_form").submit(function(e){
+            if(validator.form()){
+                var form = this;
+                e.preventDefault();
+                //
+                $("body").addClass("loading");
+                $(".modalLoading").show(); 
+                //
+                var a = setTimeout(function(){
+                    form.submit();
+                },1000);
+            }
         });
     </script>
 </body>
