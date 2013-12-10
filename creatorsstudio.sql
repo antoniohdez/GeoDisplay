@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS `points` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `audio_path` varchar(512) NOT NULL,
   `video_path` varchar(512) NOT NULL,
+  `facebook` varchar(512) NOT NULL,
+  `twitter` varchar(512) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_points` (`user_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=19 ;
@@ -83,8 +85,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   `country` varchar(128) NOT NULL,
   `city` varchar(128) NOT NULL,
   `logo_path` varchar(512) CHARACTER SET utf8 NOT NULL,
-  `facebook` varchar(512) NOT NULL,
-  `twitter` varchar(512) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

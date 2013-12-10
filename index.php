@@ -9,51 +9,28 @@ if(!isset($_SESSION["id"])){
 } 
 
 $msg = isset($_GET["msg"]) ? $_GET["msg"] : 0;
-$tag_name = '';
-$description = '';
-$url = '';
-$latitude = '';
-$longitude = '';
-$facebook = '';
-$twitter = '';
+$tag_name = $description = $url = $latitude = $longitude = $facebook = $twitter = '';
 
-$success = true;
 $canUpload = $driver->checkPoints($_SESSION["id"]);
 
 if(isset($_GET["submit"])){
 	if($canUpload){
 		$target_path = "uploads/";
 		$target_path = $target_path.basename($_FILES['uploadedfile']['name']); 
-		if(move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) { 
-			//echo "File ". basename( $_FILES['uploadedfile']['name']). " has been uploaded";
-			$success = true;
-		} else{
-			//echo "Something is wrong, try again. Please.";
-			$success = false;
+		if(! move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) { 
+			header("Location: index.php?msg=2");
 		}
-
-        $logo_path = "logo/";
-        $logo_path = $logo_path.basename($_FILES['uploadedlogo']['name']); 
-        if(move_uploaded_file($_FILES['uploadedlogo']['tmp_name'], $logo_path)) { 
-            $success = true;
-        } else{
-            $success = false;
-        }
 
         $audio_path = "audio/";
         $audio_path = $audio_path.basename($_FILES['uploadedaudio']['name']); 
-        if(move_uploaded_file($_FILES['uploadedaudio']['tmp_name'], $audio_path)) { 
-            $success = true;
-        } else{
-            $success = false;
-        }
+        if(! move_uploaded_file($_FILES['uploadedaudio']['tmp_name'], $audio_path)) { 
+            header("Location: index.php?msg=2");
+        } 
 
         $video_path = "video/";
-        $video_path = $video_path.basename($_FILES['uploadedvideo']['name']); 
-        if(move_uploaded_file($_FILES['uploadedvideo']['tmp_name'], $video_path)) { 
-            $success = true;
-        } else{
-            $success = false;
+        $video_path = $video_path.basename($_FILES['uploadedvideo']['name']);
+        if(! move_uploaded_file($_FILES['uploadedvideo']['tmp_name'], $video_path)) { 
+            header("Location: index.php?msg=2");
         }
 
 		$tag_name = $_POST["tag_name"];
@@ -63,20 +40,17 @@ if(isset($_GET["submit"])){
 		$longitude = $_POST["longitude"];
         $facebook = $_POST["facebook"];
         $twitter = $_POST["twitter"];
-        $driver->addTag($_SESSION["id"], $tag_name, $description, $latitude, $longitude, $target_path, $url, $logo_path, $audio_path, $video_path, $facebook, $twitter);
+
+        $driver->addTag($_SESSION["id"], $tag_name, $description, $latitude, $longitude, $target_path, $url, $audio_path, $video_path, $facebook, $twitter);
 		
-        if ($success){
-			header("Location: index.php?msg=1");
-		} else {
-			header("Location: index.php?msg=2");
-		}
+		header("Location: index.php?msg=1");
 	} 
     else {
 		header("Location: index.php?msg=3");
 	}
-	exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,101 +72,54 @@ if(isset($_GET["submit"])){
                     $(element).addClass("input-error");
                 },
                 rules :{
-                    tag_name : {
-                        required : true, //para validar campo vacio
-                    },
-                    description :{
-                        required : true	
-                    },
-					url :{
-                        required : true	
-                    },
-					url_title :{
-                        required : true	
-                    },
-					uploadedfile :{
-                        required : true	
-                    },
-                    uploadedlogo :{
-                        required : true 
-                    }
-                    uploadedaudio :{
-                        required : true 
-                    }
-                    uploadedvideo :{
-                        required : true 
-                    }
-                    facebook :{
-                        required : true 
-                    }
-                    twitter :{
-                        required : true 
-                    }
+                    tag_name : { required : true },
+                    description : { required : true },
+					url : { required : true },
+					uploadedfile : { required : true	},
+                    uploadedlogo : { required : true },
+                    uploadedaudio : { required : true },
+                    uploadedvideo : { required : true },
+                    facebook : { required : true },
+                    twitter : { required : true }
                 },
                 messages :{
-                    tag_name : {
-                        required : "", //para validar campo vacio
-                    },
-                    description : {
-                        required : ""	
-                    },
-					url :{
-                        required : ""	
-                    },
-					url_title :{
-                        required : ""	
-                    },
-					uploadedfile :{
-                        required : ""	
-                    },
-                    uploadedlogo :{
-                        required : "" 
-                    }
-                    uploadedaudio :{
-                        required : "" 
-                    }
-                    uploadedvideo :{
-                        required : "" 
-                    }
-                    facebook :{
-                        required : "" 
-                    }
-                    twitter :{
-                        required : "" 
-                    }
+                    tag_name : { required : "" },
+                    description : { required : "" },
+					url : { required : "" },
+					uploadedfile : { required : "" },
+                    uploadedlogo : { required : "" },
+                    uploadedaudio : { required : "" },
+                    uploadedvideo : { required : "" },
+                    facebook : { required : "" },
+                    twitter : { required : "" }
                 },
                 errorElement: "div",
-                wrapper: "div",  // a wrapper around the error message
+                wrapper: "div", 
                 errorPlacement: function(error, element) {
                     offset = element.offset();
                     error.insertBefore(element)
-                    //error.addClass('message-form');  // add a class to the wrapper
                     error.css('position', 'absolute');
                     error.css('left', offset.left + element.outerWidth() + 10);
                     error.css('top', offset.top + 5);
                 }
             });
 		$("textarea[maxlength]").keyup(function() {
-        var limit   = $(this).attr("maxlength"); // Límite del textarea
-        var value   = $(this).val();             // Valor actual del textarea
-        var current = value.length;              // Número de caracteres actual
-            if (limit < current) {               // Más del límite de caracteres?
-                // Establece el valor del textarea al límite
+        var limit = $(this).attr("maxlength"); 
+        var value = $(this).val();             
+        var current = value.length;              
+            if (limit < current) {
                 $(this).val(value.substring(0, limit));
             }
         });
     });
-	</script>
-    
+	</script>    
 </head>
-<body>
-    <?php
-        print_header();
-    ?>  
 
-    	<div class="container">
-			<div class="row">
-				<div class="span10 offset1">
+<body>
+    <?php print_header(); ?>  
+    <div class="container">
+		<div class="row">
+			<div class="span10 offset1">
                 <form form action="index.php?submit" enctype="multipart/form-data" class="form-horizontal" id="tag_form" method="POST">
                     <legend>Add a tag</legend>
 					<?php
@@ -227,6 +154,36 @@ if(isset($_GET["submit"])){
 						</div>
 						<?php
 						break;
+                    case 6:
+                        ?>
+                        <div >
+                            <div class="alert alert-success alerta">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Great!</strong> You have successfully edited your profile information.
+                            </div>
+                        </div>
+                        <?php
+                        break;
+                    case 7:
+                        ?>
+                        <div >
+                            <div class="alert alert-error alerta">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Oh snap!</strong> Your image couldn't load correctly.
+                            </div>
+                        </div>
+                        <?php
+                        break;
+                    case 8:
+                        ?>
+                        <div >
+                            <div class="alert alert-error alerta">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Oh snap!</strong> Your information couldn't load correctly.
+                            </div>
+                        </div>
+                    <?php
+                        break;
 					}
 					?>
                     <div class="row-fluid">
@@ -247,11 +204,10 @@ if(isset($_GET["submit"])){
                             <label for="twitter"><br>Twitter *</label>
                             <input type="text" id="twitter" name="twitter" value="<?php echo $twitter ?>" class="input-block-level" placeholder="Twitter acount">
 
-                            <label for="uploadedfile"><br>Image *</label>
-                            <input id="uploadedfile" name="uploadedfile" type="file" onchange="upload_img(this);" />
+                            <legend><br>Media data</legend>
 
-                            <label for="uploadedlogo"><br>Logo *</label>
-                            <input id="uploadedlogo" name="uploadedlogo" type="file">
+                            <label for="uploadedfile">Image *</label>
+                            <input id="uploadedfile" name="uploadedfile" type="file" onchange="upload_img(this);" />
 
                             <label for="uploadedaudio"><br>Audio *</label>
                             <input id="uploadedaudio" name="uploadedaudio" type="file">
@@ -273,15 +229,8 @@ if(isset($_GET["submit"])){
                                    <img id="img_id" width="80px" height="80px" src="#" /> 
                                 </div>
                                 <div style="margin-left:90px;">
-                                    <div id="preTitle">
-                                    
-                                    </div>
-                                    <div id="preDescription">
-                                    
-                                    </div>
-                                    <div>
-                                    
-                                    </div>
+                                    <div id="preTitle"></div>
+                                    <div id="preDescription"></div>
                                 </div>
                             </div>
                         </div>

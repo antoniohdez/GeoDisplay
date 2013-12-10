@@ -1,59 +1,64 @@
 <?php 
-
 require_once("driver.php");
 require_once("layout.php");
+
 $driver = new dbDriver();
 
 if(!isset($_SESSION["id"])){
 	header('Location: login.php?err=2');
 }
+
 $editing = isset($_GET["edit"]);
 $deleting = isset($_GET["delete"]);
 $reading = !($editing || $deleting);
 $msg = isset($_GET["msg"]) ? $_GET["msg"] : 0;
 
-$tag_name = '';
-$uploadedfile = '';
-$description = '';
-$url = '';
-$url_title = '';
-$latitude = '';
-$longitude = '';
-$id = '';
+$tag_name = $description = $url = $latitude = $longitude = $facebook = $twitter = $id = '';
 $success = true;
 
 if($editing){
 	if(isset($_GET["submit"])){
 		$target_path = "uploads/";
 		$target_path = $target_path.basename($_FILES['uploadedfile']['name']); 
-		if(move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) { 
-			//echo "File ". basename( $_FILES['uploadedfile']['name']). " has been uploaded";
-		} else{
-			//echo "Something is wrong, try again.";
-		}
+		if(! move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) { 
+			header("Location: tags.php?msg=5");
+		} 
+		$audio_path = "audio/";
+        $audio_path = $audio_path.basename($_FILES['uploadedaudio']['name']); 
+        if(! move_uploaded_file($_FILES['uploadedaudio']['tmp_name'], $audio_path)) { 
+            header("Location: tags.php?msg=6");
+        } 
+        $video_path = "video/";
+        $video_path = $video_path.basename($_FILES['uploadedvideo']['name']);
+        if(! move_uploaded_file($_FILES['uploadedvideo']['tmp_name'], $video_path)) { 
+            header("Location: tags.php?msg=7");
+        }
+
 		$tag_name = $_POST["tag_name"];
 		$description = $_POST["description"];
 		$url = $_POST["url"];
-		$url_title = $_POST["url_title"];
 		$latitude = $_POST["latitude"];
 		$longitude = $_POST["longitude"];
+		$facebook = $_POST["facebook"];
+		$twitter = $_POST["twitter"];
 		$id = $_POST["id"];
-		$success = $success and $driver->editTag($tag_name, $description, $latitude, $longitude, $target_path, $url, $url_title, $id);
+
+		$success = $driver->editTag($tag_name, $description, $latitude, $longitude, $target_path, $audio_path, $video_path, $url, $facebook, $twitter, $id);
 		if ($success){
 			header("Location: tags.php?msg=1");
 		} else {
 			header("Location: tags.php?msg=2");
 		}
-		exit();
 	}
+
 	$array = $driver->getTag($_GET["edit"]);
 	$tag_name = $array["point_name"];
-	//$uploadedfile = $array["image_path"];
 	$description = $array["description"];
 	$url = $array["url"];
-	$url_title = $array["text_url"];
 	$latitude = $array["latitude"];
 	$longitude = $array["longitude"];
+	$facebook = $array["facebook"];
+	$twitter = $array["twitter"];
 	$id = $array["id"];
 }
 if($deleting){
@@ -61,9 +66,8 @@ if($deleting){
 	if ($success){
 		header("Location: tags.php?msg=3");
 	} else {
-		header("Location: tags.php?msg=2");
+		header("Location: tags.php?msg=4");
 	}
-	exit();
 }
 ?>
 
@@ -89,40 +93,33 @@ if($deleting){
                 highlight: function(element, errorClass) {
                     $(element).addClass("input-error");
                 },
-                rules :{
-                    tag_name : {
-                        required : true, //para validar campo vacio
-                    },
-                    description :{
-                        required : true	
-                    },
-					url :{
-                        required : true	
-                    },
-					url_title :{
-                        required : true	
-                    }
+                 rules :{
+                    tag_name : { required : true },
+                    description : { required : true },
+					url : { required : true },
+					uploadedfile : { required : true	},
+                    uploadedlogo : { required : true },
+                    uploadedaudio : { required : true },
+                    uploadedvideo : { required : true },
+                    facebook : { required : true },
+                    twitter : { required : true }
                 },
                 messages :{
-                    tag_name : {
-                        required : "", //para validar campo vacio
-                    },
-                    description : {
-                        required : ""	
-                    },
-					url :{
-                        required : ""	
-                    },
-					url_title :{
-                        required : ""	
-                    }
+                    tag_name : { required : "" },
+                    description : { required : "" },
+					url : { required : "" },
+					uploadedfile : { required : "" },
+                    uploadedlogo : { required : "" },
+                    uploadedaudio : { required : "" },
+                    uploadedvideo : { required : "" },
+                    facebook : { required : "" },
+                    twitter : { required : "" }
                 },
                 errorElement: "div",
-                wrapper: "div",  // a wrapper around the error message
+                wrapper: "div",
                 errorPlacement: function(error, element) {
                     offset = element.offset();
                     error.insertBefore(element)
-                    //error.addClass('message-form');  // add a class to the wrapper
                     error.css('position', 'absolute');
                     error.css('left', offset.left + element.outerWidth() + 10);
                     error.css('top', offset.top + 5);
@@ -130,11 +127,10 @@ if($deleting){
             });
 		
 		$("textarea[maxlength]").keyup(function() {
-        var limit   = $(this).attr("maxlength"); // Límite del textarea
-        var value   = $(this).val();             // Valor actual del textarea
-        var current = value.length;              // Número de caracteres actual
-            if (limit < current) {                   // Más del límite de caracteres?
-                // Establece el valor del textarea al límite
+        var limit   = $(this).attr("maxlength"); 
+        var value   = $(this).val();             
+        var current = value.length;              
+            if (limit < current) {                   
                 $(this).val(value.substring(0, limit));
             }
         });
@@ -170,7 +166,7 @@ if($deleting){
 						<div >
 							<div class="alert alert-error alerta">
 								<button type="button" class="close" data-dismiss="alert">&times;</button>
-								<strong>Oh snap!</strong> Change a few things up and try submitting again.
+								<strong>Oh snap!</strong> Your information couldn't load correctly.
 							</div>
 						</div>
 					<?php
@@ -185,7 +181,47 @@ if($deleting){
 						</div>
 					<?php
 					break;
-					}
+					case 4:
+                    ?>
+                        <div >
+                            <div class="alert alert-error alerta">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Oh snap!</strong> The tag couldn't be deleted.
+                            </div>
+                        </div>
+                    <?php
+                    break;
+                    case 5:
+                    ?>
+                        <div >
+                            <div class="alert alert-error alerta">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Oh snap!</strong> Your image couldn't load correctly.
+                            </div>
+                        </div>
+                    <?php
+                    break;
+                    case 6:
+                    ?>
+                        <div >
+                            <div class="alert alert-error alerta">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Oh snap!</strong> Your audio couldn't load correctly.
+                            </div>
+                        </div>
+                    <?php
+                    break;
+                    case 7:
+                    ?>
+                        <div >
+                            <div class="alert alert-error alerta">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Oh snap!</strong> Your video couldn't load correctly.
+                            </div>
+                        </div>
+                    <?php
+                    break;
+                    }
 					$driver->getTags($_SESSION['id']);
 					?>
                     </div>
@@ -203,32 +239,50 @@ if($deleting){
                     <legend>Edit your tag</legend>
                     <div class="row-fluid">
                         <div class="span5">
+
                             <label for="tag_name">Tag name *</label>
-                            <input type="text" id="tag_name" name="tag_name" value="<?php echo $tag_name ?>" class="input-block-level" placeholder="My tag">
-                        	
-                            <label for="uploadedfile"><br>Image *</label>
-							<input id="uploadedfile" name="uploadedfile" value="<?php echo $uploadedfile ?>" type="file">
+                            <input type="text" id="tag_name" name="tag_name" value="<?php echo $tag_name ?>" class="input-block-level">
                         
                             <label for="description" style="margin-top:10px;">Description *</label>
-                            <textarea name="description" id="description" style="resize:none" maxlength="140" rows="4" class="input-block-level" placeholder="140 characters"><?php echo $description ?></textarea>
+                            <textarea id="description" name="description" style="resize:none" maxlength="140" rows="4" value="<?php echo $description ?>" class="input-block-level"><?php echo $description ?></textarea>
                         	
 							<label for="url"><br>URL *</label>
-							<input type="text" id="url" name="url" value="<?php echo $url ?>" class="input-block-level" placeholder="www.mycompany.com">
-							
-							<label for="url_title"><br>URL Title *</label>
-							<input type="text" id="url_title" name="url_title" value="<?php echo $url_title ?>" class="input-block-level" placeholder="My company">
+							<input type="text" id="url" name="url" value="<?php echo $url ?>" class="input-block-level">
+
+                            <label for="facebook"><br>Facebook *</label>
+                            <input type="text" id="facebook" name="facebook" value="<?php echo $facebook ?>" class="input-block-level">
+
+                            <label for="twitter"><br>Twitter *</label>
+                            <input type="text" id="twitter" name="twitter" value="<?php echo $twitter ?>" class="input-block-level" >
+
+                            <legend><br>Media data</legend>
+
+                            <label for="uploadedfile">Image *</label>
+                            <input id="uploadedfile" name="uploadedfile" type="file" onchange="upload_img(this);" />
+
+                            <label for="uploadedaudio"><br>Audio *</label>
+                            <input id="uploadedaudio" name="uploadedaudio" type="file">
+
+                            <label for="uploadedvideo"><br>Video *</label>
+                            <input id="uploadedvideo" name="uploadedvideo" type="file">
                         
                         </div>
                         <div class="span7">
-                        	<div id="map" style="margin: 0; padding: 0;height:300px; width:auto;"></div>
-							<input type="text" id="latitude" name="latitude" style="display: none;" value="<?php echo $latitude ?>" class="input-block-level" >
-							<input type="text" id="longitude" name="longitude" style="display: none;" value="<?php echo $longitude ?>" class="input-block-level" >
-							<input type="text" id="id" name="id" style="display: none;" value="<?php echo $id ?>" class="input-block-level" >
+                        	<label for="latitude">Latitude *</label>
+                            <input type="text" id="latitude" name="latitude" value="<?php echo $latitude ?>" class="input-block-level" >
+                            
+                            <label for="longitude"><br>Longitude *</label>
+                            <input type="text" id="longitude" name="longitude" value="<?php echo $longitude ?>" class="input-block-level" >
+                            <input type="text" id="id" name="id" style="display: none;" value="<?php echo $id ?>" class="input-block-level" >
 
-						</div>
+                            <div id="map" style="margin: 15px 0 0 0; padding: 0;height:230px; width:auto;"></div>
+							
+                        </div>
                     </div>
+
                 	<div class="row-fluid">
                     	<div class="span12" style="margin-top:15px;">
+                    		<hr>
                     		<button type="submit" class="btn btn-primary">Save</button>
                         	<input type="reset" class="btn" value="Cancel" >
 							
@@ -244,5 +298,17 @@ if($deleting){
                 
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap.file-input.js"></script>
+    <script type="text/javascript">
+        $("#latitude").on("focusout", function() {
+            pos = new google.maps.LatLng(parseFloat($("#latitude").val()), parseFloat($("#longitude").val()));
+            marker.position = pos;
+            map.setCenter(pos);
+        });
+        $("#longitude").on("focusout", function() {
+            pos = new google.maps.LatLng(parseFloat($("#latitude").val()), parseFloat($("#longitude").val()));
+            marker.position = pos;
+            map.setCenter(pos);
+        });
+    </script>
 </body>
 </html>

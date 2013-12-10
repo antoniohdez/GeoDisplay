@@ -17,6 +17,7 @@ function print_header() {
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Edit <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="tags.php">Edit your tags</a></li>
+                  <li><a href="user.php">Edit your profile</a></li>
                 </ul>
               </li>
               <li class="divider-vertical"></li>

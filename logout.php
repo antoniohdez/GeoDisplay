@@ -1,7 +1,6 @@
 <?php
 session_start(); 
 session_destroy();
-//$_SESSION = array();
 
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
@@ -11,5 +10,6 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
-header ("Location: login.php");  
+header ("Location: login.php"); 
+ 
 ?>

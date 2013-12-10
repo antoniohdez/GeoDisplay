@@ -1,5 +1,4 @@
 <?php
-//error_reporting(0);
 class dbDriver{
 	private $conexion;
 	
@@ -16,11 +15,8 @@ class dbDriver{
 		mysqli_close($this->conexion);
 	}
 
-	function addTag($user_id, $point_name, $description, $latitude, $longitude, $image_path, $url, $logo_path, $audio_path, $video_path, $facebook, $twitter){
-		$query = mysqli_query($this->conexion, "INSERT INTO points (user_id, point_name, description, latitude, longitude, image_path, url, audio_path, video_path) VALUES ('$user_id', '$point_name', '$description', '$latitude', '$longitude', '$image_path', '$url', '$audio_path', '$video_path')");
-		$query = mysqli_query($this->conexion, "UPDATE users SET logo_path = '$logo_path' WHERE id='$user_id' ");
-		$query = mysqli_query($this->conexion, "UPDATE users SET facebook = '$facebook' WHERE id='$user_id' ");
-		$query = mysqli_query($this->conexion, "UPDATE users SET twitter = '$twitter' WHERE id='$user_id' ");
+	function addTag($user_id, $point_name, $description, $latitude, $longitude, $image_path, $url, $audio_path, $video_path, $facebook, $twitter){
+		$query = mysqli_query($this->conexion, "INSERT INTO points (user_id, point_name, description, latitude, longitude, image_path, url, audio_path, video_path, facebook, twitter) VALUES ('$user_id', '$point_name', '$description', '$latitude', '$longitude', '$image_path', '$url', '$audio_path', '$video_path', '$facebook', '$twitter')");
 	}
 	
 	function login($user, $password){
@@ -52,8 +48,23 @@ class dbDriver{
 			"longitude" => $row['longitude'],
 			"image_path" => $row['image_path'],
 			"url" => $row['url'],
-			"text_url" => $row['text_url'],
 			"id" => $row['id'],
+			"facebook" => $row['facebook'],
+			"twitter" => $row['twitter'],
+		);
+		return $array;
+	}
+
+	function getUser($id){
+		$query = mysqli_query($this->conexion, "SELECT * FROM users WHERE id='$id'");
+		$row=$query->fetch_array(MYSQLI_ASSOC);
+		$array = array(
+			"name" => $row['name'],
+			"email" => $row['email'],
+			"points" => $row['points'],
+			"country" => $row['country'],
+			"city" => $row['city'],
+			"logo_path" => $row['logo_path'],
 		);
 		return $array;
 	}
@@ -72,16 +83,16 @@ class dbDriver{
 		echo "</table>";
 	}
 	
-	function editTag($point_name, $description, $latitude, $longitude, $image_path, $url, $text_url, $id){
-		if($image_path=="uploads/"){
-			return $query = mysqli_query($this->conexion,"UPDATE points SET point_name='$point_name', description='$description', latitude=$latitude, longitude=$longitude, url='$url', text_url='$text_url' WHERE id='$id'");
-		} else {
-			return $query = mysqli_query($this->conexion,"UPDATE points SET point_name='$point_name', description='$description', latitude=$latitude, longitude=$longitude, image_path='$image_path', url='$url', text_url='$text_url' WHERE id='$id'"); 	 
-		}
+	function editTag($point_name, $description, $latitude, $longitude, $image_path, $audio_path, $video_path, $url, $facebook, $twitter, $id){
+		return $query = mysqli_query($this->conexion,"UPDATE points SET point_name='$point_name', description='$description', latitude='$latitude', longitude='$longitude', image_path='$image_path', audio_path='$audio_path', video_path='$video_path', url='$url', facebook='$facebook', twitter='$twitter' WHERE id='$id'"); 	 
 	}
-	
-	function editTagWithoutImage($point_name, $description, $latitude, $longitude, $url, $text_url, $id){
-		return $query = mysqli_query($this->conexion,"UPDATE points SET point_name='$point_name', description='$description', latitude=$latitude, longitude=$longitude, url='$url', text_url='$text_url' WHERE id='$id'");
+
+	function editUser($id, $name, $email, $country, $city, $logo_path){
+		if($logo_path=="logo/"){
+			return $query = mysqli_query($this->conexion,"UPDATE users SET name='$name', email='$email', country='$country', city='$city' WHERE id='$id'");
+		} else {
+			return $query = mysqli_query($this->conexion,"UPDATE users SET name='$name', email='$email', country='$country', city='$city', logo_path='$logo_path' WHERE id='$id'"); 	 
+		}
 	}
 	
 	function deleteTag($id){
@@ -103,10 +114,11 @@ class dbDriver{
 			$url = $row_tag['url'];
 			$audio_path = $row_tag['audio_path'];
 			$video_path = $row_tag['video_path'];
-			$facebook = $row_user['facebook'];
-			$twitter = $row_user['twitter'];
+			$facebook = $row_tag['facebook'];
+			$twitter = $row_tag['twitter'];
+			$logo = $row_user['logo_path'];
 
-			$posts[] = array('point_name'=>$point_name, 'description'=>$description, 'latitude'=>$latitude, 'longitude'=>$longitude, 'image_path'=>$image_path, 'url'=>$url, 'audio_path'=>$audio_path, 'video_path'=>$video_path, 'facebook'=>$facebook , 'twitter'=>$twitter);
+			$posts[] = array('point_name'=>$point_name, 'description'=>$description, 'latitude'=>$latitude, 'longitude'=>$longitude, 'image_path'=>$image_path, 'url'=>$url, 'audio_path'=>$audio_path, 'video_path'=>$video_path, 'logo_path'=>$logo, 'facebook'=>$facebook , 'twitter'=>$twitter);
 		}
 		$response['posts'] = $posts;
 		$fp = fopen("$id.json", 'w');
