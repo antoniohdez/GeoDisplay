@@ -201,10 +201,10 @@ if(isset($_GET["submit"])){
 							<input type="text" id="url" name="url" value="<?php echo $url ?>" class="input-block-level" placeholder="www.mycompany.com">
 
                             <label for="facebook"><br>Facebook *</label>
-                            <input type="text" id="facebook" name="facebook" value="<?php echo $facebook ?>" class="input-block-level" placeholder="Facebook acount">
+                            <input type="text" id="facebook" name="facebook" value="<?php echo $facebook ?>" class="input-block-level" placeholder="Facebook account">
 
                             <label for="twitter"><br>Twitter *</label>
-                            <input type="text" id="twitter" name="twitter" value="<?php echo $twitter ?>" class="input-block-level" placeholder="Twitter acount">
+                            <input type="text" id="twitter" name="twitter" value="<?php echo $twitter ?>" class="input-block-level" placeholder="Twitter account">
 
                             <legend><br>Media data</legend>
 
@@ -281,11 +281,13 @@ if(isset($_GET["submit"])){
             pos = new google.maps.LatLng(parseFloat($("#latitude").val()), parseFloat($("#longitude").val()));
             marker.position = pos;
             map.setCenter(pos);
+            openInfoWindow();
         });
         $("#longitude").on("focusout", function() {
             pos = new google.maps.LatLng(parseFloat($("#latitude").val()), parseFloat($("#longitude").val()));
             marker.position = pos;
             map.setCenter(pos);
+            openInfoWindow();
         });
 
         $("#tag_form").submit(function(e){

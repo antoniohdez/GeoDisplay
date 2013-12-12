@@ -89,7 +89,8 @@ var input = /** @type {HTMLInputElement} */(
       };
 
       // Create a marker for each place.
-      var marker = new google.maps.Marker({
+      
+      marker = new google.maps.Marker({
         map: map,
         icon: image,
         title: place.name,
