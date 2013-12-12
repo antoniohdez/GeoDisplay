@@ -61,7 +61,7 @@ if(isset($_GET["submit"])){
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
     <link href="css/register_form.css" rel="stylesheet">
     <link href="css/general_style.css" rel="stylesheet">
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
     <script src="js/map.js"></script>
 	<script src="js/jquery.js"></script>
     <script src="js/jquery.validate.js"></script>
@@ -225,8 +225,10 @@ if(isset($_GET["submit"])){
                             <label for="longitude"><br>Longitude *</label>
                             <input type="text" id="longitude" name="longitude" class="input-block-level" >
 
-                            <div id="map" style="margin: 15px 0 0 0; padding: 0;height:230px; width:auto;"></div>
-							<div class="preview">
+                            <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+                            <div id="map" style="margin: 15px 0 0 0; padding: 0;height:400px; width:auto;"></div>
+							<!--
+                            <div class="preview">
                                 <div id="previewImage" style="float:left; width:80px; height:80px; background:#DDD">
                                    <img id="img_id" width="80px" height="80px" src="#" /> 
                                 </div>
@@ -235,6 +237,7 @@ if(isset($_GET["submit"])){
                                     <div id="preDescription"></div>
                                 </div>
                             </div>
+                            -->
                         </div>
                     </div>
 
@@ -249,7 +252,7 @@ if(isset($_GET["submit"])){
                 </form>
             </div>
         </div>
-        </div>  
+    </div>  
         
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap.file-input.js"></script>
@@ -297,6 +300,11 @@ if(isset($_GET["submit"])){
                     form.submit();
                 },1000);
             }
+        });
+
+        $('#pac-input').keypress(function(e){
+            if ( e.which == 13 ) e.preventDefault();
+            if ( e.which == 13 ) return false;
         });
     </script>
 
