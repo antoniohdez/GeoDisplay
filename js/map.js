@@ -111,21 +111,28 @@ var input = /** @type {HTMLInputElement} */(
     var bounds = map.getBounds();
     searchBox.setBounds(bounds);
   });
-
-  setTimeout(function(){
-		var markerLatLng = window.marker.getPosition();
-		document.getElementById('latitude').value = markerLatLng.lat();
-		document.getElementById('longitude').value = markerLatLng.lng();
-		infowindow = new google.maps.InfoWindow({
-		  maxWidth: 200
-		});
-		google.maps.event.addListener(marker, 'mouseup', function() {
-			openInfoWindow();
-		});
-  }, 2000);
+  
+  setPositionForm();
 
 }
 
+function setPositionForm(){
+    if ( marker != null ){
+        var markerLatLng = marker.getPosition();
+        document.getElementById('latitude').value = markerLatLng.lat();
+        document.getElementById('longitude').value = markerLatLng.lng();
+        infowindow = new google.maps.InfoWindow({
+          maxWidth: 200
+        });
+        google.maps.event.addListener(marker, 'mouseup', function() {
+          openInfoWindow();
+        });
+    }
+    else
+    {
+        window.setTimeout("setPositionForm();",100);
+    }
+  } 
 
 function handleNoGeolocation() {
   var options = {
