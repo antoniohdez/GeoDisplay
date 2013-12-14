@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 22, 2013 at 07:23 AM
+-- Generation Time: Dec 13, 2013 at 01:52 AM
 -- Server version: 5.5.27
 -- PHP Version: 5.4.7
 
@@ -37,18 +37,19 @@ CREATE TABLE IF NOT EXISTS `points` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `audio_path` varchar(512) NOT NULL,
   `video_path` varchar(512) NOT NULL,
-  `facebook` varchar(512) NOT NULL,
-  `twitter` varchar(512) NOT NULL,
+  `facebook` varchar(256) NOT NULL,
+  `twitter` varchar(256) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_points` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=19 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=21 ;
 
 --
 -- Dumping data for table `points`
 --
 
-INSERT INTO `points` (`user_id`, `point_name`, `description`, `latitude`, `longitude`, `image_path`, `url`, `id`, `audio_path`, `video_path`) VALUES
-('creatorsstudio', 'PcMicro', 'Venta de equipo de computo al mejor precio', 20.8052687, -103.47306470000001, 'uploads/imagen000.jpg', 'www.pcmicro.com', 18, 'audio/imagen000.jpg', 'video/imagen000.jpg');
+INSERT INTO `points` (`user_id`, `point_name`, `description`, `latitude`, `longitude`, `image_path`, `url`, `id`, `audio_path`, `video_path`, `facebook`, `twitter`) VALUES
+('creatorsstudio', 'PcMicro', 'Venta de equipo de computo al mejor precio', 20.8052687, -103.47306470000001, 'uploads/reloj.jpg', 'www.pcmicro.com', 18, 'audio/reloj3.jpg', 'video/reloj2.jpg', 'www.facebook.com', 'www.twitter.com'),
+('creatorsstudio', 'Prueba 2', 'Lorem ipsum', 20.36959, -102.7692404, 'uploads/reloj.jpg', 'www.google.com', 20, 'audio/reloj2.jpg', 'video/reloj3.jpg', 'www.facebook.com', 'ww.twitter.com');
 
 --
 -- Triggers `points`
@@ -92,8 +93,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `points`, `country`, `city`, `logo_path`, `facebook`, `twitter`) VALUES
-('creatorsstudio', 'Creators Studio', 'info@creatorsstudio.mx', '37f62f1363b04df4370753037853fe88', 8, 'México', 'Zapopan', 'logo/imagen000.jpg', 'pcmicro', 'pcmicro');
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `points`, `country`, `city`, `logo_path`) VALUES
+('creatorsstudio', 'Creators Studio', 'info@creatorsstudio.mx', '37f62f1363b04df4370753037853fe88', 7, 'MÃ©xico', 'Guadalajara', 'logo/reloj2.jpg');
 
 --
 -- Constraints for dumped tables
